@@ -1,0 +1,85 @@
+
+
+trigger:
+  - master
+pr:
+  autoCancel: true
+  branches:
+    include:
+      - master
+
+variables:
+- name: baseVersionNumber
+  value: '0.609'
+- name: Minor 
+  value: $[counter(variables['BaseVersionNumber'], 1)]
+- name: VersionNumber 
+  value: $(BaseVersionNumber).$(Minor)
+
+pool:
+  vmImage: 'windows-latest'
+
+name: $(TeamProject)_$(VersionNumber)_$(Build.SourceBranchName)
+
+steps:
+  - task: PowerShell@2
+    displayName: "Run Tests"
+    inputs:
+      targetType: "inline"
+      script: |     
+        Install-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1 -Scope CurrentUser -SkipPublisherCheck -Force
+        Import-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1      
+        Set-Location "./Tests"
+        $Edition = $PSVersionTable.PSEdition
+        Invoke-Pester -CodeCoverage ../P*/*.ps1 -Script @{Path = "./*.tests.ps1"} -OutputFile "Test-$Edition-Results.xml" -OutputFormat NUnitXML -CodeCoverageOutputFile "coverage-$Edition-results.xml"
+      pwsh: true
+
+  - task: PublishTestResults@2
+    displayName: "Publish Test Results **/Test*Results.xml"
+    inputs:
+      testResultsFormat: NUnit
+      testResultsFiles: "**/Test-*Results.xml"
+      testRunTitle: windows-latest
+      publishRunAttachments: false
+      failTaskOnFailedTests: true
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Tests Coverage'
+    inputs:
+      codeCoverageTool: 'JaCoCo'
+      summaryFileLocation: '**/coverage-*-results.xml'
+      pathToSources: '$(System.DefaultWorkingDirectory)'
+      failIfCoverageEmpty: true
+
+  - task: CopyFiles@2
+    displayName: "Copy Files to: $(build.artifactstagingdirectory)"
+    inputs:
+      Contents: |
+        Public\**
+        *.psd1
+        *.psm1
+      TargetFolder: "$(build.artifactstagingdirectory)"
+
+  - task: PublishBuildArtifacts@1
+    displayName: "Publish Artifact: Infiltrator"
+    inputs:
+      ArtifactName: Infiltrator
+
+  - task: DownloadPipelineArtifact@2
+    inputs:
+      artifact: Infiltrator
+      path: $(Build.ArtifactStagingDirectory)\Infiltrator
+
+  - task: PowerShell@2
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+    displayName: "Publish to PowerShellGallery"
+    inputs:
+      targetType: "inline"
+      script: |
+        Install-Module Spiny -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
+        Import-Module Spiny -Force -Verbose
+        $moduleNumber = Edit-SPModuleVersionNumber -ModuleVersionNumber $env:VERSIONNUMBER -psd1File $(Build.ArtifactStagingDirectory)/Aadder/Aadder.psd1
+        Publish-SPPackageToPowerShellGallery `
+        -apiKey '$(apikey)' `
+        -path $(Build.ArtifactStagingDirectory)/Infiltrator
+      pwsh: true
