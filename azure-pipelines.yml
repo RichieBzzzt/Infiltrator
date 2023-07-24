@@ -37,7 +37,7 @@ steps:
   - task: AzurePowerShell@5
     displayName: 'Run Tests'
     inputs:
-      azureSubscription: 'Infiltrator'
+      azureSubscription: ${{ variables.azureSubscription }}
       ScriptType: InlineScript
       Inline: |            
         $Edition = $PSVersionTable.PSEdition
