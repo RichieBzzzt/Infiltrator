@@ -19,33 +19,37 @@ variables:
 pool:
   vmImage: 'windows-latest'
 
-name: $(TeamProject)_$(VersionNumber)_$(Build.SourceBranchName)
+  name: Infiltrator_$(BuildID)
 
 steps:
   - task: PowerShell@2
-    displayName: "Run Tests"
+    displayName: "Update Build Number"
     inputs:
-      targetType: "inline"
-      script: |     
-        Install-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1 -Scope CurrentUser -SkipPublisherCheck -Force
-        Import-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1      
-        Set-Location "./Tests"
-        $Edition = $PSVersionTable.PSEdition
-        Invoke-Pester -CodeCoverage ../P*/*.ps1 -Script @{Path = "./*.tests.ps1"} -OutputFile "Test-$Edition-Results.xml" -OutputFormat NUnitXML -CodeCoverageOutputFile "coverage-$Edition-results.xml"
-      pwsh: true
+      targetType: 'inline'
+      script: |
+          $BuildName = $env:BUILD_DEFINITIONNAME +'_'+$env:VERSIONNUMBER +'_'+ $env:BUILD_SOURCEBRANCHNAME 
+          Write-Host "##vso[build.updatebuildnumber]$BuildName"
+
+  - task: AzurePowerShell@5
+    displayName: 'Install Pester'
+    inputs:
+      azureSubscription: 'Infiltrator'
+      ScriptType: InlineScript
+      Inline: |        
+            Install-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1 -Scope CurrentUser -SkipPublisherCheck -Force
+            Import-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1      
+      azurePowerShellVersion: LatestVersion
 
   - task: AzurePowerShell@5
     displayName: 'Run Tests'
     inputs:
       azureSubscription: 'Infiltrator'
       ScriptType: InlineScript
-      Inline: |        
-        Install-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1 -Scope CurrentUser -SkipPublisherCheck -Force
-        Import-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1      
-        Set-Location "./Tests"
+      Inline: |            
         $Edition = $PSVersionTable.PSEdition
         Invoke-Pester -CodeCoverage ../P*/*.ps1 -Script @{Path = "./*.tests.ps1"} -OutputFile "Test-$Edition-Results.xml" -OutputFormat NUnitXML -CodeCoverageOutputFile "coverage-$Edition-results.xml"
       azurePowerShellVersion: LatestVersion
+      workingDirectory: $(Build.SourcesDirectory)/Tests
 
   - task: PublishTestResults@2
     displayName: "Publish Test Results **/Test*Results.xml"
@@ -56,13 +60,13 @@ steps:
       publishRunAttachments: false
       failTaskOnFailedTests: true
 
-  # - task: PublishCodeCoverageResults@1
-  #   displayName: 'Publish Tests Coverage'
-  #   inputs:
-  #     codeCoverageTool: 'JaCoCo'
-  #     summaryFileLocation: '**/coverage-*-results.xml'
-  #     pathToSources: '$(System.DefaultWorkingDirectory)'
-  #     failIfCoverageEmpty: true
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Tests Coverage'
+    inputs:
+      codeCoverageTool: 'JaCoCo'
+      summaryFileLocation: '**/coverage-*-results.xml'
+      pathToSources: '$(System.DefaultWorkingDirectory)'
+      failIfCoverageEmpty: true
 
   - task: CopyFiles@2
     displayName: "Copy Files to: $(build.artifactstagingdirectory)"
