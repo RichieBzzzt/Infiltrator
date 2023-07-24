@@ -13,7 +13,7 @@ variables:
 pool:
   vmImage: 'windows-latest'
 
-  name: Infiltrator_$(BuildID)
+name: Infiltrator_$(BuildID)
 
 steps:
   - task: PowerShell@2
