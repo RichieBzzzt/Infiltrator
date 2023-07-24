@@ -27,7 +27,7 @@ steps:
   - task: AzurePowerShell@5
     displayName: 'Install Pester'
     inputs:
-      azureSubscription: ${{ variables.azureSubscription }}
+      azureSubscription: $(azureSubscription)
       ScriptType: InlineScript
       Inline: |        
             Install-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1 -Scope CurrentUser -SkipPublisherCheck -Force
@@ -37,7 +37,7 @@ steps:
   - task: AzurePowerShell@5
     displayName: 'Run Tests'
     inputs:
-      azureSubscription: ${{ variables.azureSubscription }}
+      azureSubscription: $(azureSubscription)
       ScriptType: InlineScript
       Inline: |            
         $Edition = $PSVersionTable.PSEdition
