@@ -1,12 +1,6 @@
 
 
-trigger:
-  - main
-pr:
-  autoCancel: true
-  branches:
-    include:
-      - main
+trigger: none
 
 variables:
 - name: baseVersionNumber
@@ -47,7 +41,7 @@ steps:
       ScriptType: InlineScript
       Inline: |            
         $Edition = $PSVersionTable.PSEdition
-        Invoke-Pester -CodeCoverage ../P*/*.ps1 -Script @{Path = "./*.tests.ps1"} -OutputFile "Test-$Edition-Results.xml" -OutputFormat NUnitXML -CodeCoverageOutputFile "coverage-$Edition-results.xml"
+        Invoke-Pester -CodeCoverage ../P*/*.ps1 -OutputFile "Test-$Edition-Results.xml" -OutputFormat NUnitXML -CodeCoverageOutputFile "coverage-$Edition-results.xml"
       azurePowerShellVersion: LatestVersion
       workingDirectory: $(Build.SourcesDirectory)/Tests
 
