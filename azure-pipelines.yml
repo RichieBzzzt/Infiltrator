@@ -78,7 +78,7 @@ steps:
       script: |
         Install-Module Spiny -Scope CurrentUser -SkipPublisherCheck -Force -Verbose
         Import-Module Spiny -Force -Verbose
-        $moduleNumber = Edit-SPModuleVersionNumber -ModuleVersionNumber $env:VERSIONNUMBER -psd1File $(Build.ArtifactStagingDirectory)/Aadder/Aadder.psd1
+        $moduleNumber = Edit-SPModuleVersionNumber -ModuleVersionNumber $env:VERSIONNUMBER -psd1File $(Build.ArtifactStagingDirectory)/Infiltrator/Infiltrator.psd1
         Publish-SPPackageToPowerShellGallery `
         -apiKey '$(apikey)' `
         -path $(Build.ArtifactStagingDirectory)/Infiltrator
