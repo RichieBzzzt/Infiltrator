@@ -27,7 +27,7 @@ steps:
   - task: AzurePowerShell@5
     displayName: 'Install Pester'
     inputs:
-      azureSubscription: 'Infiltrator'
+      azureSubscription: $(azureSubscription)
       ScriptType: InlineScript
       Inline: |        
             Install-Module Pester -MinimumVersion 5.1.1 -MaximumVersion 5.1.1 -Scope CurrentUser -SkipPublisherCheck -Force
