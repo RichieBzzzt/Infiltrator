@@ -43,13 +43,13 @@ steps:
       publishRunAttachments: false
       failTaskOnFailedTests: true
 
-  - task: PublishCodeCoverageResults@1
-    displayName: 'Publish Tests Coverage'
-    inputs:
-      codeCoverageTool: 'JaCoCo'
-      summaryFileLocation: '**/coverage-*-results.xml'
-      pathToSources: '$(System.DefaultWorkingDirectory)'
-      failIfCoverageEmpty: true
+  # - task: PublishCodeCoverageResults@1
+  #   displayName: 'Publish Tests Coverage'
+  #   inputs:
+  #     codeCoverageTool: 'JaCoCo'
+  #     summaryFileLocation: '**/coverage-*-results.xml'
+  #     pathToSources: '$(System.DefaultWorkingDirectory)'
+  #     failIfCoverageEmpty: true
 
   - task: CopyFiles@2
     displayName: "Copy Files to: $(build.artifactstagingdirectory)"

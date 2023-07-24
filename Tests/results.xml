@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<test-results xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="nunit_schema_2.5.xsd" name="Pester" total="1" errors="0" failures="0" not-run="0" inconclusive="0" ignored="0" skipped="0" invalid="0" date="2023-07-24" time="16:58:08">
+  <environment user="richielee" os-version="22.5.0" user-domain="" clr-version="Unknown" nunit-version="2.5.8.0" machine-name="RDK-2020092.cust.communityfibre.co.uk" platform="Darwin" cwd="/Users/richielee/Documents/src/repos/Infiltrator/Tests" />
+  <culture-info current-culture="en-US" current-uiculture="en-US" />
+  <test-suite type="TestFixture" name="Pester" executed="True" result="Success" success="True" time="0.052" asserts="0" description="Pester">
+    <results>
+      <test-suite type="TestFixture" name="/Users/richielee/Documents/src/repos/Infiltrator/Tests/Switch-ArmTriggerRuntimeStateToMatchAdfTrigger.tests.ps1" executed="True" result="Success" success="True" time="0.052" asserts="0" description="/Users/richielee/Documents/src/repos/Infiltrator/Tests/Switch-ArmTriggerRuntimeStateToMatchAdfTrigger.tests.ps1">
+        <results>
+          <test-suite type="TestFixture" name="Import Module" executed="True" result="Success" success="True" time="0.0171" asserts="0" description="Import Module">
+            <results>
+              <test-case description="Should not throw" name="Import Module.Should not throw" time="0.0077" asserts="0" success="True" result="Success" executed="True" />
+            </results>
+          </test-suite>
+        </results>
+      </test-suite>
+    </results>
+  </test-suite>
+</test-results>
