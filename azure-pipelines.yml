@@ -19,7 +19,16 @@ variables:
 pool:
   vmImage: 'windows-latest'
 
-name: $(TeamProject)_$(VersionNumber)_$(Build.SourceBranchName)
+  name: Infiltrator_$(BuildID)
+
+  steps:
+    - task: PowerShell@2
+      displayName: "Update Build Number"
+      inputs:
+        targetType: 'inline'
+        script: |
+            $BuildName = $env:BUILD_DEFINITIONNAME +'_'+$env:VERSIONNUMBER +'_'+ $env:BUILD_SOURCEBRANCHNAME 
+            Write-Host "##vso[build.updatebuildnumber]$BuildName"
 
 steps:
   - task: PowerShell@2
